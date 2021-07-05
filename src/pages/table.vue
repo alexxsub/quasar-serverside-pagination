@@ -50,6 +50,7 @@ export default {
       return this.columns.map(el => {
         el.label = this.$t(el.name)
         el.field = el.name
+
         return el
       })
     }

@@ -1,6 +1,9 @@
 // © 2021 Alexx Sub, https://github.com/alexxsub/
 module.exports = {
   Query: {
+    getData2: async (_, args, { User, currentUser }) => {
+      return null
+    },
     getData: async (_, args, { User, currentUser }) => {
       // fill demo data
       var data = [],

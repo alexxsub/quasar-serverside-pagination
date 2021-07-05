@@ -102,6 +102,16 @@ export const DATA = gql`
     }
   }
 `
+export const DATA2 = gql`
+  query getData2{
+    getData {
+      name
+      admin
+      director
+      manager
+    }
+  }
+`
 export const CHECK_ACCESS = gql`
   query checkAccess($res: String!){
     checkAccess(res: $res)

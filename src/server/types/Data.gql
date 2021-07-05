@@ -6,4 +6,5 @@ type Data {
 }
 type Query {
   getData: [Data]
+  getData2: [Data]
 }
