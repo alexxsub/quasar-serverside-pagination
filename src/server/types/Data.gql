@@ -8,3 +8,7 @@ type Query {
   getData: [Data]
   getData2: [Data]
 }
+type Mutation {
+  add(records: Int): Data
+  clear: Data
+}

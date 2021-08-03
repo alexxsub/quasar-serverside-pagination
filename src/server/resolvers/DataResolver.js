@@ -1,6 +1,7 @@
 // © 2021 Alexx Sub, https://github.com/alexxsub/
 module.exports = {
   Query: {
+
     getData2: async (_, args, { User, currentUser }) => {
       return null
     },
@@ -28,6 +29,12 @@ module.exports = {
     }
   },
   Mutation: {
-
+    add: async (_, args, { Data, User, currentUser }) => {
+      return null
+    },
+    clear: async (_, args, { Data, User, currentUser }) => {
+      const res = await Data.remove()
+      return res
+    }
   }
 }
