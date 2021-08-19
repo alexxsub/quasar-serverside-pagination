@@ -11,7 +11,10 @@ const app = require('express')(),
   jwt = require('jsonwebtoken'),
   typeDefs = require('./types'),
   resolvers = require('./resolvers'),
-  context = require('./models')
+  context = require('./models'),
+  fs = require('fs');
+
+var params = {}
 
 require('dotenv').config({ path: '../../.env' })
 const port = process.env.PORT || 8080
@@ -83,11 +86,16 @@ const server = new ApolloServer({
       signed = noAuth.includes(query)
     context.currentUser = await getUser(token, signed)
     context.userIP = req.ip.split(':').pop()
+    context.params = params
     return context
   }
 })
 // replace code 400 over 401 (correct)
 const contextAuthError = (req, res, next) => {
+  if (req.method=='GET')
+  {
+    params= req.query
+  }
   const origSend = res.send
 
   res.send = (content) => {
@@ -104,8 +112,6 @@ const contextAuthError = (req, res, next) => {
 // add other middleware
 app.use(express.static('uploads'))
 app.use(cors())
-// app.use(bodyParser.json())
-// app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/api', contextAuthError)// add 401 error code
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'))
@@ -117,7 +123,7 @@ app.use(morgan(function (tokens, req, res) {
     tokens.date(req, res, 'clf'),
     tokens['remote-addr'](req, res),
     tokens.method(req, res),
-    req.body.operationName,
+    req.body.operationName?req.body.operationName:'',
     tokens.url(req, res),
     tokens.status(req, res),
     tokens.res(req, res, 'content-length'), '-',
