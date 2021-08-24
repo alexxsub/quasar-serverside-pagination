@@ -1,7 +1,8 @@
 
 // © 2021 Alexx Sub, https://github.com/alexxsub/
 const mongoose = require('mongoose'),
-  bcrypt = require('bcrypt')
+  bcrypt = require('bcrypt'),
+  mongoosePaginate = require('mongoose-paginate-v2')
 
 const UserSchema = new mongoose.Schema({
   avatar: {
@@ -58,5 +59,7 @@ UserSchema.pre('save', function (next) {
     })
   })
 })
+
+UserSchema.plugin(mongoosePaginate)
 
 module.exports = mongoose.model('User', UserSchema)

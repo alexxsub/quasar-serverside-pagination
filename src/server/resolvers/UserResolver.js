@@ -18,11 +18,24 @@ module.exports = {
   },
 
   Query: {
+   getUsers: async (_, args, { User }) => {
+      const users = await User.find().sort({ createdDate: 'desc' })
+        return users
 
-    getUsers: async (_, args, { User }) => {
-      const users = await User.find({}).sort({ createdDate: 'desc' })
-     // console.log(var1)
-      return users
+    },
+    getUsers2: async (_, args, { User }) => {
+
+      const options = {
+        page: 1,
+        limit: 10,
+        sort: { createdDate: 'desc' },
+        collation: {
+          locale: 'en'
+        }
+      }
+      User.paginate({}, options, function (err, result) {
+        return result
+      })
     },
     getCurrentUser: async (_, args, { User, currentUser }) => {
       if (!currentUser) {
