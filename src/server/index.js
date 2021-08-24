@@ -105,8 +105,6 @@ const contextAuthError = (req, res, next) => {
 // add other middleware
 app.use(express.static('uploads'))
 app.use(cors())
-// app.use(bodyParser.json())
-// app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/api', contextAuthError)// add 401 error code
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'))
@@ -118,7 +116,7 @@ app.use(morgan(function (tokens, req, res) {
     tokens.date(req, res, 'clf'),
     tokens['remote-addr'](req, res),
     tokens.method(req, res),
-    req.body.operationName,
+    req.body.operationName ? req.body.operationName : '',
     tokens.url(req, res),
     tokens.status(req, res),
     tokens.res(req, res, 'content-length'), '-',
