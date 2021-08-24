@@ -9,6 +9,7 @@
       :data="getUsers"
       :columns="i18ncolumns"
       row-key="_id"
+      :pagination.sync="pagination"
     >
     <!--
     <template v-slot:top-left>
@@ -111,12 +112,25 @@ export default {
       row_id: '', // id of current expanded record
       render: false, // flag of render page
       Columns: [], // list of columns
-      hiddenTitle: ['avatar', 'enabled']// hidden  title of columns
+      hiddenTitle: ['avatar', 'enabled'], // hidden  title of columns
+      pagination: {
+        sortBy: '',
+        descending: false,
+        page: 1,
+        rowsPerPage: 3,
+        rowsNumber: 10
+      }
     }
   },
   apollo: {
     getUsers: {
-      query: USERS
+      query: USERS,
+      variables () { // for use reactive variables
+        return {
+          pagination: this.pagination
+        }
+      }
+
     },
     getColumns: {
       query: GET_COLUMNS,

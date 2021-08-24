@@ -21,7 +21,7 @@ module.exports = {
 
     getUsers: async (_, args, { User }) => {
       const users = await User.find({}).sort({ createdDate: 'desc' })
-
+     // console.log(var1)
       return users
     },
     getCurrentUser: async (_, args, { User, currentUser }) => {
