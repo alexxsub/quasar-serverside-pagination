@@ -83,6 +83,7 @@ const server = new ApolloServer({
       query = req.body.operationName,
       signed = noAuth.includes(query)
     context.currentUser = await getUser(token, signed)
+    context.pagination = req.body.variables.pagination
     context.userIP = req.ip.split(':').pop()
     return context
   }
@@ -116,7 +117,7 @@ app.use(morgan(function (tokens, req, res) {
     tokens.date(req, res, 'clf'),
     tokens['remote-addr'](req, res),
     tokens.method(req, res),
-    req.body.operationName ? req.body.operationName : '',
+    //   req.body.operationName,
     tokens.url(req, res),
     tokens.status(req, res),
     tokens.res(req, res, 'content-length'), '-',

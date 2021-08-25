@@ -29,6 +29,19 @@ export const USERS = gql`
   }
   ${fragment}
 `
+export const USERS2 = gql`
+  query getUsers2 {
+    getUsers2 {
+      docs{
+      ...User
+      }
+        page
+        rowsPerPage
+        rowsNumber
+    }
+  }
+  ${fragment}
+`
 export const MODIFY_USER = gql`
   mutation modifyUser($input: inputUser!) {
     modifyUser(input: $input) {

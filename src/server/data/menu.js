@@ -10,6 +10,11 @@ const menu = [
     link: '/users'
   },
   {
+    name: 'users2',
+    icon: 'people',
+    link: '/users2'
+  },
+  {
     name: 'director',
     icon: 'mdi-account-cowboy-hat',
     link: '/director'

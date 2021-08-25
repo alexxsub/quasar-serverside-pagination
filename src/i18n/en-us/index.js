@@ -60,6 +60,10 @@ export default {
       title: 'Users',
       caption: 'Table of users and roles'
     },
+    users2: {
+      title: 'Users2',
+      caption: 'Server side pagination'
+    },
     manager: {
       title: 'For manager',
       caption: 'Context for manager role'

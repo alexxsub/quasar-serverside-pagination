@@ -2,22 +2,27 @@
   <q-page padding>
 
     <div class="q-pa-md">
+
     <q-table
       v-if="render"
       virtual-scroll
+      :loading="loading"
       :title="$t('userstable')"
-      :data="getUsers"
+      :data="records"
       :columns="i18ncolumns"
       row-key="_id"
+      :pagination.sync="pagination"
+      :filter="filter"
+      @request="onRequest"
     >
-    <!--
+
     <template v-slot:top-left>
       <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-    </template> -->
+    </template>
     <template v-slot:top-right>
         <q-btn color="secondary" icon="add" @click="newRecord" :label="$t('add')" />
     </template>
@@ -91,7 +96,6 @@
         </q-tr>
       </template>
     </q-table>
-    {{getColumns}}
   </div>
   </q-page>
 </template>
@@ -99,24 +103,44 @@
 <script>
 import RoleChips from 'components/RoleChips.vue'
 import bus from '../event-bus'
-import { USERS, DELETE_USER, ENABLED_USER, GET_COLUMNS } from 'src/queries'
+import { USERS2, DELETE_USER, ENABLED_USER, GET_COLUMNS } from 'src/queries'
 import { showError, showMsg } from '../front-lib'
 export default {
   name: 'Users',
   components: { RoleChips },
   data () {
     return {
+      loading: false,
       globalprops: {}, // previos expanded tr of table
       enabled: false, // value of enabled field expanded record
       row_id: '', // id of current expanded record
       render: false, // flag of render page
+      filter: '',
       Columns: [], // list of columns
-      hiddenTitle: ['avatar', 'enabled'] // hidden  title of columns
+      records: [],
+      hiddenTitle: ['avatar', 'enabled'], // hidden  title of columns
+      pagination: {
+        sortBy: '',
+        descending: false,
+        page: 1,
+        rowsPerPage: 3,
+        rowsNumber: 0
+      }
     }
   },
   apollo: {
-    getUsers: {
-      query: USERS
+    getUsers2: {
+      query: USERS2,
+      variables () { // for use reactive variables
+        return {
+          pagination: this.pagination
+        }
+      },
+      update: function (data) {
+        this.records.splice(0, this.records.length, ...data.getUsers2.docs)
+        this.pagination.rowsNumber = data.getUsers2.rowsNumber
+        this.pagination.page = data.getUsers2.page
+      }
 
     },
     getColumns: {
@@ -138,6 +162,18 @@ export default {
     }
   },
   methods: {
+    onRequest (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      // const filter = props.filter
+
+      this.loading = true
+      this.pagination.page = page
+      this.pagination.rowsPerPage = rowsPerPage
+      this.pagination.sortBy = sortBy
+      this.pagination.descending = descending
+      this.$apollo.queries.getUsers2.refetch()
+      this.loading = false
+    },
     computedUrl (url) {
       return `${process.env.BASE_URL}${url}`
     },
@@ -147,6 +183,9 @@ export default {
       this.globalprops.expand = (p.expand && this.globalprops.expand)
       p.expand = !p.expand
       this.globalprops = p
+    },
+    userSaved () {
+      this.$apollo.queries.getUsers2.refetch()
     },
     newRecord () {
       bus.$emit('newRecord')
@@ -166,7 +205,7 @@ export default {
         this.$apollo.mutate({
           mutation: DELETE_USER,
           variables: { id },
-          refetchQueries: [{ query: USERS }]
+          refetchQueries: [{ query: USERS2 }]
         })
           .then(data => showMsg(this.$t('recorddeleted')))
           .catch(error => showError(error.message))
@@ -176,7 +215,7 @@ export default {
       this.$apollo.mutate({
         mutation: ENABLED_USER,
         variables: { id: this.row_id, enabled },
-        refetchQueries: [{ query: USERS }]
+        refetchQueries: [{ query: USERS2 }]
       })
         .then(data => showMsg(enabled ? this.$t('userenabled') : this.$t('userdisabled')))
         .catch(error => {
@@ -186,10 +225,14 @@ export default {
     }
   },
   mounted () {
-
+    bus.$on('UserSaved', this.userSaved) // subsribe for event to update main table
   },
   computed: {
 
+    rowsNumber () {
+    //  return this.getUsers2.rowsNumber
+      return 8
+    },
     i18ncolumns () {
       return this.Columns.map(el => {
         if (!this.hiddenTitle.includes(el.name)) { el.label = this.$t(el.name) }

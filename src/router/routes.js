@@ -50,6 +50,13 @@ const routes = [
     ]
   },
   {
+    path: '/users2',
+    component: () => import('layouts/HomeLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/users2.vue') }
+    ]
+  },
+  {
     path: '/table',
     component: () => import('layouts/HomeLayout.vue'),
     children: [

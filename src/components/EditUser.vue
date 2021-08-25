@@ -119,10 +119,10 @@ export default {
   },
   methods: {
 
-    role (key) {
+    role (key) { // role by id
       return TypeRoles.filter(i => i.value === key)[0]
     },
-    // фильтрация записей при выборе ролей на карточке пользователя
+    // filtering roles by selected records
     onFilter (val, update) {
       update(() => {
         if (val === '') {
@@ -164,6 +164,7 @@ export default {
                 ? this.$t('recordadded')
                 : this.$t('recordupdated')
               showMsg(message)
+              bus.$emit('UserSaved') // emit for update main table
               return true
             })
             .catch(error => {

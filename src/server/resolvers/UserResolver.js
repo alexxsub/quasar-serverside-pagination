@@ -3,6 +3,18 @@ const bcrypt = require('bcrypt'),
   jwt = require('jsonwebtoken'),
   { UserInputError } = require('apollo-server-express')
 
+const myCustomLabels = {
+  totalDocs: 'rowsNumber',
+  limit: 'rowsPerPage',
+  nextPage: false,
+  prevPage: false,
+  hasNextPage: false,
+  hasPrevPage: false,
+  totalPages: false,
+  pagingCounter: false,
+  meta: false
+}
+
 const createToken = (user, secret, expiresIn) => {
   const { _id, username } = user
   return jwt.sign({ _id, username }, secret, { expiresIn })
@@ -18,22 +30,23 @@ module.exports = {
   },
 
   Query: {
-   getUsers: async (_, args, { User }) => {
+    getUsers: async (_, args, { User }) => {
       const users = await User.find().sort({ createdDate: 'desc' })
-        return users
-
+      return users
     },
-    getUsers2: async (_, args, { User }) => {
-
+    getUsers2: async (_, args, { User, pagination }) => {
       const options = {
-        page: 1,
-        limit: 10,
+        page: pagination.page,
+        limit: pagination.rowsPerPage,
         sort: { createdDate: 'desc' },
+        customLabels: myCustomLabels,
         collation: {
           locale: 'en'
         }
       }
-      User.paginate({}, options, function (err, result) {
+
+      return await User.paginate({}, options, (err, result) => {
+        if (err) console.log(err)
         return result
       })
     },

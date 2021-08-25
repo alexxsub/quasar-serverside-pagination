@@ -37,10 +37,16 @@ type Token {
   token: String!
 }
 
+type  Users{
+  docs: [User]
+  page:Int
+  rowsPerPage:Int
+  rowsNumber: Int
+}
 type Query {
   getCurrentUser: User
   getUsers: [User]
-  getUsers2: [User]
+  getUsers2: Users
 }
 
 type Mutation {
