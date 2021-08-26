@@ -93,6 +93,7 @@ export const GET_COLUMNS = gql`
   query getColumns($model: String!) {
     getColumns(model: $model) {
       name
+      sortable
     }
   }
 `

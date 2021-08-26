@@ -1,8 +1,6 @@
 <template>
   <q-page padding>
-
     <div class="q-pa-md">
-
     <q-table
       v-if="render"
       virtual-scroll
@@ -17,7 +15,13 @@
     >
 
     <template v-slot:top-left>
-      <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+      <q-input
+        borderless
+        clearable
+        dense
+        debounce="300"
+        v-model="filter"
+        :placeholder="$t('search')">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -133,13 +137,15 @@ export default {
       query: USERS2,
       variables () { // for use reactive variables
         return {
-          pagination: this.pagination
+          pagination: this.pagination,
+          filter: this.filter
         }
       },
       update: function (data) {
         this.records.splice(0, this.records.length, ...data.getUsers2.docs)
         this.pagination.rowsNumber = data.getUsers2.rowsNumber
         this.pagination.page = data.getUsers2.page
+        this.loading = false
       }
 
     },
@@ -164,15 +170,14 @@ export default {
   methods: {
     onRequest (props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination
-      // const filter = props.filter
-
       this.loading = true
+      this.pagination.sortBy = sortBy
+      this.pagination.descending = descending
       this.pagination.page = page
       this.pagination.rowsPerPage = rowsPerPage
       this.pagination.sortBy = sortBy
       this.pagination.descending = descending
       this.$apollo.queries.getUsers2.refetch()
-      this.loading = false
     },
     computedUrl (url) {
       return `${process.env.BASE_URL}${url}`

@@ -43,6 +43,7 @@ export default {
   oldpassword: 'Старый пароль',
   newpassword: 'Новый пароль',
   changepassword: 'Сменить пароль',
+  search: 'Поиск',
   menu: {
     home: {
       title: 'В начало',

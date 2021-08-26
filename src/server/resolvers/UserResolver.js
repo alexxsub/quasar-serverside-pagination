@@ -34,18 +34,34 @@ module.exports = {
       const users = await User.find().sort({ createdDate: 'desc' })
       return users
     },
-    getUsers2: async (_, args, { User, pagination }) => {
+    getUsers2: async (_, args, { User, pagination, filter }) => {
+      let sort = { createdDate: 'desc' }
+      if ((pagination.sortBy !== '') && (pagination.sortBy !== null) && (pagination.sortBy !== undefined)) {
+        sort = {}
+        sort[pagination.sortBy] = pagination.descending ? 'desc' : 'asc'
+      }
+
       const options = {
         page: pagination.page,
         limit: pagination.rowsPerPage,
-        sort: { createdDate: 'desc' },
+        sort,
         customLabels: myCustomLabels,
         collation: {
           locale: 'en'
         }
       }
+      let query = {}
+      if ((filter !== '') && (filter !== null) && (filter !== undefined)) {
+        query = {
+          $or: [
+            { username: { $regex: filter } },
+            { fullname: { $regex: filter } },
+            { email: { $regex: filter } }
+          ]
+        }
+      }
 
-      return await User.paginate({}, options, (err, result) => {
+      return await User.paginate(query, options, (err, result) => {
         if (err) console.log(err)
         return result
       })

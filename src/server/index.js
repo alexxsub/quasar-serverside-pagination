@@ -84,6 +84,7 @@ const server = new ApolloServer({
       signed = noAuth.includes(query)
     context.currentUser = await getUser(token, signed)
     context.pagination = req.body.variables.pagination
+    context.filter = req.body.variables.filter
     context.userIP = req.ip.split(':').pop()
     return context
   }

@@ -18,6 +18,7 @@ module.exports = {
         if (!hiddenFields.includes(path)) {
           res.push({
             name: path,
+            sortable: true,
             type: myschema.paths[path].instance
           })
         }

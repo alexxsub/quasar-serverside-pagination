@@ -43,6 +43,7 @@ export default {
   oldpassword: 'Old password',
   newpassword: 'New password',
   changepassword: 'Change password',
+  search: 'Search',
   menu: {
     home: {
       title: 'Home',
