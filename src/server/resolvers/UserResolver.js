@@ -1,19 +1,8 @@
 // © 2021 Alexx Sub, https://github.com/alexxsub/
 const bcrypt = require('bcrypt'),
   jwt = require('jsonwebtoken'),
-  { UserInputError } = require('apollo-server-express')
-
-const myCustomLabels = {
-  totalDocs: 'rowsNumber',
-  limit: 'rowsPerPage',
-  nextPage: false,
-  prevPage: false,
-  hasNextPage: false,
-  hasPrevPage: false,
-  totalPages: false,
-  pagingCounter: false,
-  meta: false
-}
+  { UserInputError } = require('apollo-server-express'),
+  setPagination = require('./pagination.js')
 
 const createToken = (user, secret, expiresIn) => {
   const { _id, username } = user
@@ -35,31 +24,7 @@ module.exports = {
       return users
     },
     getUsers2: async (_, args, { User, pagination, filter }) => {
-      let sort = { createdDate: 'desc' }
-      if ((pagination.sortBy !== '') && (pagination.sortBy !== null) && (pagination.sortBy !== undefined)) {
-        sort = {}
-        sort[pagination.sortBy] = pagination.descending ? 'desc' : 'asc'
-      }
-
-      const options = {
-        page: pagination.page,
-        limit: pagination.rowsPerPage,
-        sort,
-        customLabels: myCustomLabels,
-        collation: {
-          locale: 'en'
-        }
-      }
-      let query = {}
-      if ((filter !== '') && (filter !== null) && (filter !== undefined)) {
-        query = {
-          $or: [
-            { username: { $regex: filter } },
-            { fullname: { $regex: filter } },
-            { email: { $regex: filter } }
-          ]
-        }
-      }
+      const { query, options } = setPagination(pagination, filter, ['username', 'fullname', 'email'])
 
       return await User.paginate(query, options, (err, result) => {
         if (err) console.log(err)
