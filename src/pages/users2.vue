@@ -176,7 +176,6 @@ export default {
       this.pagination.page = page
       this.pagination.rowsPerPage = rowsPerPage
       this.pagination.sortBy = sortBy
-      this.pagination.descending = descending
       this.$apollo.queries.getUsers2.refetch()
     },
     computedUrl (url) {
