@@ -1,7 +1,7 @@
+// customizing output filelds
 const myCustomLabels = {
   totalDocs: 'rowsNumber',
   limit: 'rowsPerPage',
-  page: true,
   nextPage: false,
   prevPage: false,
   hasNextPage: false,
@@ -10,7 +10,9 @@ const myCustomLabels = {
   pagingCounter: false,
   meta: false
 }
-
+// pagination - object with info about pagination, sortinig,rowsperpage, currentpage etc
+// filter- string for search
+// fields- array of search fields
 var setPagination = function (pagination, filter, fields) {
   let sort = { createdDate: 'desc' }
   if ((pagination.sortBy !== '') && (pagination.sortBy !== null) && (pagination.sortBy !== undefined)) {
@@ -20,7 +22,7 @@ var setPagination = function (pagination, filter, fields) {
 
   const options = {
     page: pagination.page,
-    limit: pagination.rowsPerPage,
+    limit: pagination.rowsPerPage === 0 ? (pagination.rowsNumber > 100 ? 100 : pagination.rowsNumber) : pagination.rowsPerPage,
     sort,
     customLabels: myCustomLabels,
     collation: {
